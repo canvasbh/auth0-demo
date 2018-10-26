@@ -1,0 +1,29 @@
+<html>
+<head>
+  <script src="https://cdn.auth0.com/js/auth0/9.5.1/auth0.min.js"></script>
+</head>
+<body>
+  <h1>Hi there</h1>
+  <button id='btn-login'>
+    Click me to Login
+  </button>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+  var webAuth = new auth0.WebAuth({
+    domain: 'canvasbh.auth0.com',
+    clientID: '_1Tv2escAAgL9cRFIva4uK3l-YCrv5dy',
+    responseType: 'token id_token',
+    scope: 'openid',
+    redirectUri: window.location.href
+  });
+
+  var loginBtn = document.getElementById('btn-login');
+  loginBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      webAuth.authorize();
+    });
+  }, false);
+  </script>
+</body>
+</html>
