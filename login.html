@@ -8,21 +8,77 @@
     Click me to Login
   </button>
 
+  <div class='container'>
+    <h4>{login status}</h4>
+  </div>
+
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-  var webAuth = new auth0.WebAuth({
-    domain: 'canvasbh.auth0.com',
-    clientID: '_1Tv2escAAgL9cRFIva4uK3l-YCrv5dy',
-    responseType: 'token id_token',
-    scope: 'openid',
-    redirectUri: window.location.href
-  });
+    var webAuth = new auth0.WebAuth({
+      domain: 'canvasbh.auth0.com',
+      clientID: '_1Tv2escAAgL9cRFIva4uK3l-YCrv5dy',
+      responseType: 'token id_token',
+      scope: 'openid',
+      redirectUri: window.location.href
+    });
 
-  var loginBtn = document.getElementById('btn-login');
-  loginBtn.addEventListener('click', function(e) {
+    var loginBtn = document.getElementById('btn-login');
+    loginBtn.addEventListener('click', function(e) {
       e.preventDefault();
       webAuth.authorize();
     });
+
+    var loginStatus = document.querySelector('.container h4');
+
+    function handleAuthentication() {
+      webAuth.parseHash(function(err, authResult) {
+        if (authResult && authResult.accessToken && authResult.idToken) {
+          window.location.hash = '';
+          setSession(authResult);
+          loginBtn.style.display = 'none';
+        } else if (err) {
+          console.log(err);
+          alert(
+            'Error: ' + err.error + '. Check the console for further details.'
+          );
+        }
+        displayButtons();
+      });
+    }
+
+    function setSession(authResult) {
+      // Set the time that the Access Token will expire at
+      var expiresAt = JSON.stringify(
+        authResult.expiresIn * 1000 + new Date().getTime()
+      );
+      localStorage.setItem('access_token', authResult.accessToken);
+      localStorage.setItem('id_token', authResult.idToken);
+      localStorage.setItem('expires_at', expiresAt);
+    }
+
+    function logout() {
+      // Remove tokens and expiry time from localStorage
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('id_token');
+      localStorage.removeItem('expires_at');
+      displayButtons();
+    }
+
+    function isAuthenticated() {
+      // Check whether the current time is past the
+      // Access Token's expiry time
+      var expiresAt = JSON.parse(localStorage.getItem('expires_at'));
+      return new Date().getTime() < expiresAt;
+    }
+
+    function displayButtons() {
+      if (isAuthenticated()) {
+        loginStatus.innerHTML = 'You are logged in!';
+      } else {
+        loginStatus.innerHTML =
+          'You are not logged in! Please log in to continue.';
+      }
+    }
   }, false);
   </script>
 </body>
