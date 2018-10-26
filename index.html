@@ -86,6 +86,8 @@
       webAuth.client.userInfo(accessToken, function(err, profile) {
         if (profile) {
           return profile;
+        } else {
+          console.error(err);
         }
       });
     }
