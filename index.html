@@ -82,6 +82,7 @@
     }
 
     function getProfileInfo() {
+      accessToken = localStorage.getItem('access_token');
       webAuth.client.userInfo(accessToken, function(err, profile) {
         if (profile) {
           return profile;
