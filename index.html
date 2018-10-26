@@ -18,7 +18,7 @@
       domain: 'canvasbh.auth0.com',
       clientID: '_1Tv2escAAgL9cRFIva4uK3l-YCrv5dy',
       responseType: 'token id_token',
-      scope: 'openid',
+      scope: 'openid profile',
       redirectUri: window.location.href
     });
 
@@ -74,10 +74,19 @@
     function displayButtons() {
       if (isAuthenticated()) {
         loginStatus.innerHTML = 'You are logged in!';
+        console.log(getProfileInfo());
       } else {
         loginStatus.innerHTML =
           'You are not logged in! Please log in to continue.';
       }
+    }
+
+    function getProfileInfo() {
+      webAuth.client.userInfo(accessToken, function(err, profile) {
+        if (profile) {
+          return profile;
+        }
+      });
     }
 
     // Handle it...
